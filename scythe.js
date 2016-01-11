@@ -242,12 +242,20 @@ function makeSite(parsedFiles, config) {
 
 
     function parseDataDir() {
-        var dataFiles = fse.readdirSync('_data');
+        var dataFiles;
+
+        try {
+            fse.readdirSync('_data');
+        } catch(err) {
+            // Do nothing
+        }
+
         var data = {};
+
         _.each(dataFiles, function(file) {
-            if (!(path.extname(file) === '.yaml')) return;
+            if (!(path.extname(file) === '.yml')) return;
             try {
-                data[path.basename(file, '.yaml')] = yaml.safeLoad(fse.readFileSync(path.join('_data', file)));
+                data[path.basename(file, '.yml')] = yaml.safeLoad(fse.readFileSync(path.join('_data', file)));
             } catch(err) {
                 consoleMessage('error', 'Error! Could not open or parse data file "' + file + '".');
             }
