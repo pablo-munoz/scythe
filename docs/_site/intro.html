@@ -1,0 +1,207 @@
+
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="public/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="public/solarized-dark.css"/>
+    <link rel="stylesheet" href="public/style.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <header class="navbar navbar-static-top docs-nav" id="top" role="banner">
+      <div class="container">
+        <div class="navbar-header">
+          <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#docs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="index.html" class="navbar-brand">Scythe</a>
+        </div>
+        <nav id="docs-navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="intro.html">Introduction</a></li>
+            <li><a href="users.html">User's Guide</a></li>
+            <li><a href="system.html">System Documentation</a></li>
+            <li><a href="acknowledgements.html">Acknowledgements</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="docs-header" tabindex="-1">
+      <div class="container">
+        <h1>Introduction</h1>
+        <p></p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div id="content" class="col-md-9">
+          
+
+<div>
+  <h1>What is Scythe</h1>
+
+  <p>Scythe is a NodeJS program that runs in the command line and
+    whose purpose is to create static websites. It also has some
+    literate programming capabilities (sort of).</p>
+
+  <p>The part of Scythe that is a static website generator is very
+    similar to other similar programs like
+    <a href="https://jekyllrb.com/">jekyll</a> and <a href="http://wintersmith.io/">wintersmith</a>. However
+    it is also different from the alternatives it is limited to only
+    understanding html files, so you will not be able to write your
+    pages in markdown or any other quasi-html.</p>
+
+  <p>When we say the program has some literate programming
+  functionality we mean that it is possible for the user to put a
+  special html tag in the html files they write. These html tags, that
+  we call markup code references (because they are references to code
+  that are in a markup file), don't actually appear in the html output
+  of the generated static site, in their place, the program copies the
+  lines of code they reference and marks it up with some other html.
+  This has the effect of making the referenced code appear in the
+  browser, inside a box and syntax colored as it would be in a
+  programming IDE.</p>
+</div>
+
+<div>
+  <h1>More on literate programming</h1>
+
+  <p>Literate programming is a philosophy for writing software that
+    emphasizes documentation. But even the term "documentation" falls
+    short of what literate programming intends to do, since most
+    documentation in the industry is some kind of program-generated
+    description of the classes and functions of a computer program. In
+    literate programming, writing a software system is more like writing
+    a book that has embedded code, but whose ultimate purpose is to
+    comunicate ideas from human to human.</p>
+</div>
+
+<div>
+  <h1>Motivation</h1>
+
+  <p>This program was born out of my desire to create literate
+    programming documents for my software systems. Initially I
+    attempted to write literate programs in LaTeX, however the
+    resulting PDF files turned out to be a bit of a turnoff, since I
+    had grown accostumed to the great online documentation of some
+    technologies such as the Twitter's Bootstrap CSS framework and the
+    NodeJS standard libraries documentation. In addition, since much
+    of my work was about web applications and I had been championing
+    the superiority of the browser as a medium, it seemed like a bit
+    of a disconnect that the documentation of my software wasn't
+    itself a webpage.</p>
+
+  <p>Having settled on the decition that my software documentations
+    would live in the web and being an avid Emacs user I explored it's
+    major mode org as my programming environment. However, I never truly
+    stopped feeling awkward and came to the following realizations:</p>
+
+  <dl>
+    <dt>Tools matter</dt>
+    <dd>Although some people argue that all you need to program is
+      Notepad or TextEdit, the truth, at least for me is that tools
+      are not a pro but a must. Syntax coloring, code navigation and
+      other such functionalities have superb implementations in the
+      most pupular editors. However, these things never worked a 100%
+      on the Emacs org mode, for example I decided that I wanted to
+      work with web-mode rather than the default html mode for html
+      code snippets, and although the standard html syntax coloring
+      worked just fine, I needed to do a reopening of the file each
+      time I added a new snippet when using the preferred web-mode
+      highlighting.</dd>
+
+    <dt>The status quo is hard to beat</dt>
+    <dd>I had been programming on my own for all my life, but as I was
+      about to embark in some associations I quickly realized that the
+      people I was going to work with would have to learn to use the
+      tools for literate programming that I had been using (Emacs +
+      org mode). Although I give the highest praise I possible can to
+      the Emacs editor and would recommend it to anyone I also
+      understood that it has a high learning curve. I wanted the
+      people I work with to have the option to begin contributing
+      right away by using the tools they already mastered.</dd>
+    </dl>
+
+    <p>The solution was to turn literate programmin on it's
+    head. Rather than writing the literate document containing the
+    source code which would then be tangled out into their
+    corresponding source files, we would write the code in their
+    source files as it has pretty much always been done, but we would
+    use comments to demarcates sections of code that we would later
+    reference from an html file.</p>
+</div>
+
+<div>
+  <h1>Terminology</h1>
+
+  <p>The Scythe program commands revolve around a directory where the
+  user puts the files that will be needed in the process of creating
+  the static site. This directory is referred to as the
+  <code>input directory</code> or <code>Scythe
+  directory</code> throughout the documentation.</p>
+
+  <p>From the input directory, the program will make a directory that
+    will contain the static site contents. This generated directory is
+    the one that should be hosted through some sort of provider and is
+    denominated as <code>output directory</code> throughout
+    this website.</p>
+
+  <p>The program catgorizes each of the files and directories
+  contained in the input directory, there are only three possible
+  categories:</p>
+
+  <ul>
+    <li>Files or directories that are meant to give additional
+      information or instructions to the Scythe programs and which
+      will not appear in the output directory are said to be of type
+      <code>special</code>.</li>
+    <li>Files that have the .html extension will be
+      processed by a template engine before being put in the output
+      directory and are referred to as a being of type <code>page</code>.</li>
+    <li>Any file or directory that does not fall in one of the above
+      categories is simply copied as-is into the output
+      directory. These files are said to be of type <code>verbatim</code>.</li>
+  </ul>
+
+  <p>The html tags the users put in their html pages which reference
+  code are called <code>markup code references</code>.</p>
+
+  <p>The lines of code that are delimited in a source file by a
+  special kind of comment, and which are the referenced code are
+  denominated <code>source code references</code>.</p>
+</div>
+
+
+        </div>
+        <div id="toc" class="col-md-3">
+        </div>
+      </div>
+    </div>
+
+    <script src="public/jquery.min.js"></script>
+    <script src="public/toc.js"></script>
+    <script src="public/bootstrap/js/bootstrap.min.js"></script>
+
+    <script>
+     $('#toc').toc({
+       'selectors': 'h1,h2,h3',
+       'container': '#content',
+       'smoothScrolling': true,
+       'prefix': 'toc',
+       'highlightOffset': 100,
+       'anchorName': function(i, heading, prefix) {
+         return prefix+i;
+       },
+       'headerText': function(i, heading, $heading) {
+         return $heading.html();
+       }
+     });
+    </script>
+  </body>
+</html>

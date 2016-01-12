@@ -1,0 +1,206 @@
+{% extends '_layouts/default.html' %}
+
+{% set title = 'User\'s Guide' %}
+
+{% block content %}
+
+<div class="section">
+  <h1>Installation</h1>
+
+  <p>First ensure that you have <a href="data.links.node">NodeJS</a> and the Node's package manager <a href="data.links.npm">NPM</a> installed.
+    The in a console run the following command.</p>
+
+  <pre>npm install -g pablo-munoz/scythe</pre>
+
+  <div class="alert alert-info">
+    The <code>-g</code> option of the installation command instructs
+    NPM that you want the program to be installed globally, this will
+    make it callable from your console no matter what the cwd is.
+  </div>
+</div>
+
+<div class="section">
+  <h1>Preliminaries</h1>
+
+  <p>A big part of the Scythe program is the use of the nunjucks
+    template engine. If you have not used the nunjucks template engine
+    before, or any template engine at all, we urge you to take a good
+    look at the <a href="{{ data.links.nunjucks }}">nunjuck's documentation</a>
+    before proceeding.</p>
+</div>
+
+<div class="section">
+  <h1>Commands</h1>
+
+  <p>
+    The Scythe program comes with a number of commands that are
+    detailed below, of these, the <code>mksite</code> command is the
+    most important as it is the one that carries out the static
+    website generation. The rest of the commands are conerned only
+    with quality of life improvements.
+  </p>
+
+
+  <h2><span class="mono">mksite</span></h2>
+
+  <p>The <code>mksite</code> command is the most important one. When
+    called it will process all files and directories in the current
+    working directory and creates a static site out of them. By default,
+    the generated static site will be inside the <code>_site/</code> special directory, at the
+    first level of whatever directory you are running the command from.</p>
+
+
+  <h2><span class="mono">mktemplate</span></h2>
+
+  <p>The <code>mktemplate</code> command creates a default Scythe
+    directory. After running it you end up with the following:</p>
+
+  <ul>
+    <li>A <code>docs/</code> directory. This will be the directory you should
+      run the <code>mksite</code> command from. The following things
+      listed next will all be inside of it.</li>
+    <li>An empty <code>_config.yml</code>.</li>
+    <li>The special directories <code>_data/</code>, <code>_layouts/</code> and <code>_includes/</code>.</li>
+    <li>A <code>default.html</code> super template (inside of <code>_layouts/</code>).</li>
+    <li>A <code>public/</code> verbatim directory is created for
+      you. It will contain a jquery file, toc.js which is our custom
+      version of the toc.js library (used for automatically generating
+      a table of contents for every page), solarized-dark.css which is
+      one of highlight.js many themes for the syntax coloring of the
+      source code and style.css the main stylesheet.</li>
+    <li>An <code>index.html</code> page-type file with some html
+      boilerplate that already links to/includes the various
+      JavaScripts and css files of <code>public/</code>.</li>
+  </ul>
+
+  <p>If you run the <code>mksite</code> command with the cwd being the directory created by
+    <code>mktemplate</code> you will end up with a static site with the same look and feel as this
+    very documentation.</p>
+</div>
+
+<div class="section">
+  <h1>Referencing code</h1>
+
+  <p>An important part of the application is it's ability to take code
+    from your software project's source files and insert it in the
+    html pages, syntax highlighted and all. In order to use this
+    functionality you must understand two concepts: code regions and
+    code references.</p>
+
+  <h2>Code regions</h2>
+
+  <p>We call code regions some contiguous lines of code that are
+    delimited by (surrounded by) two comments with a special syntax.
+    In order to distinguish between the many possible code regions
+    that can exist within a single file you must give each region
+    name. Region names can contain any characters you like, although
+    we suggest to limit yourself to using to letters, numbers,
+    underscores and spaces.</p>
+
+  <p>In a source file, to mark a region of code, you put it in between
+    two comments. The comment at the start of the region should have
+    three consecutive plus symbols <code>+++</code>, followed by the
+    name you want to give to the region. Similarly the comment at the
+    end should have three consecutive minus symbols <code>---</code>
+    and again, the name you are to give to the region.</p>
+
+  <p>For example, let's say we have a small python source file, called <code>greetings.py</code>,
+  with two functions, <code>greet_world</code> and <code>greet_user</code>.</p>
+
+  {% call scythe.block('python') %}
+def greet_world():
+    print 'Hello, world!'
+
+def greet_user():
+    name = input('What is your name?: ')
+    print 'Hello, ' + name 
+  {% endcall %}
+
+  <p>Now imagine we want to mark two regions, one that contains the
+    <code>greet_world</code> function code, which we will call
+    "greet_world", while the other marks the code
+    of the <code>greet_user</code> function, which we will call
+    "greet_user". Then our file would end up looking like this:</p>
+
+    {% call scythe.block('python') %}
+// +++ greet_world
+def greet_world():
+    print 'Hello, world!'
+// --- greet_world
+
+// +++ greet_region
+def greet_user():
+    name = input('What is your name?: ')
+    print 'Hello, ' + name 
+// --- greet_region
+  {% endcall %}
+
+  <div class="alert alert-info">
+    We suggest that you keep your code region names simple and easy to
+    remember. Usually, using the same of the function or class they
+    contain is the best way to go.
+  </div>
+
+  <div class="alert alert-warning">
+    Some programming languages have multiple comment syntaxes.
+    Usually one for single-line comments and another for multi-line
+    ones. If this is your case, always go with the single-line
+    comments, since the system has no knowledge of other comment
+    styles.
+  </div>
+
+  <p>If the code region you are delimiting is small and has no blank
+  lines in between, you can use an even simpler comment syntax to
+  delimit it. For this special case you only one comment, at the
+  beginning of the region, followed by a plus and a minus symbol <code>+-</code>,
+  followed by the name you will give to the reference.</p>
+
+  <p>In the example shown above, the python file with the two
+  functions, we could have used the simpler syntax to delimit the
+  regions. This is the case since they have no blank lines in
+  between.</p>
+
+  {% call scythe.block('python') %}
+// +- greet_world
+def greet_world():
+    print 'Hello, world!'
+
+// +- greet_region
+def greet_user():
+    name = input('What is your name?: ')
+    print 'Hello, ' + name 
+  {% endcall %}
+
+  <h2>Code references</h2>
+
+  <p>Code references are the counterparts to code regions. They exist
+    within the html files that will make the pages of the generated
+    static site and are implemented as a nunjucks macro (once again,
+    if you don't know what a nunjucks macro is please go read the
+    <a href="{{ data.links.nunjucks }}">nunjucks documentation</a>).</p>
+
+  <p>Before being able to use the reference macro you must import it
+  through a nunjucks import directive like this:</p>
+
+  {% raw %}<pre>{% import "scythe-macros.html" as scythe %}</pre>{% endraw %}
+
+  <p>The <code>scythe-macros.html</code> file is automatically put
+  within reach of the template engine, so you don't need to use an
+    absolute path or copy it into your input directory. We recommend that you do this import in the <code>layouts/</code> files,
+    so you don't have to type it in each one of your pages.</p>
+
+  <p>Making a reference to a code region is a simple as calling the <code>scythe.reference</code> macro
+  and passing as arguments the name of the desired code region and the
+  file where it should be looked up, in this order.</p>
+
+  <p>Continuing with the python source file example shown in the
+  previous headline, if we were to include the code of the <code>greet_world</code> function, which in
+    turn has been marked as being the region with the same name, <code>greet_world</code>,
+    we would put the following macro directive in the desired place of
+    a page file:</p>
+
+  {% raw %}<pre>{{ scythe.reference("greet_world", "greetings.py") }}</pre>{% endraw %}
+</div>
+
+
+{% endblock %}

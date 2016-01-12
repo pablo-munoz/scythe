@@ -1,9 +1,10 @@
 {% import "scythe-macros.html" as scythe %}
-
+ 
 <html>
   <head>
     <meta charset="utf-8"/>
-    <link rel="stylesheet" href="public/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="public/solarized-dark.css"/>
     <link rel="stylesheet" href="public/style.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,42 +29,11 @@
       </div>
     </header>
 
-    <div class="docs-header" tabindex="-1">
+    <div class="docs-masthead" tabindex="-1">
       <div class="container">
-        <h1>{{ title }}</h1>
-        <p>{{ legend }}</p>
+        {% block content %}
+        {% endblock %}
       </div>
     </div>
-
-    <div class="container">
-      <div class="row">
-        <div id="content" class="col-md-9">
-          {% block content %}
-          {% endblock %}
-        </div>
-        <div id="toc" class="col-md-3">
-        </div>
-      </div>
-    </div>
-
-    <script src="public/jquery.min.js"></script>
-    <script src="public/toc.js"></script>
-    <script src="public/bootstrap/js/bootstrap.min.js"></script>
-
-    <script>
-     $('#toc').toc({
-       'selectors': 'h1,h2,h3',
-       'container': '#content',
-       'smoothScrolling': true,
-       'prefix': 'toc',
-       'highlightOffset': 100,
-       'anchorName': function(i, heading, prefix) {
-         return prefix+i;
-       },
-       'headerText': function(i, heading, $heading) {
-         return $heading.html();
-       }
-     });
-    </script>
   </body>
 </html>
