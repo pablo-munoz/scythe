@@ -1,0 +1,889 @@
+
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="public/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="public/solarized-dark.css"/>
+    <link rel="stylesheet" href="public/style.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <header class="navbar navbar-static-top docs-nav" id="top" role="banner">
+      <div class="container">
+        <div class="navbar-header">
+          <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#docs-navbar" aria-controls="bs-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a href="index.html" class="navbar-brand">Scythe</a>
+        </div>
+        <nav id="docs-navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="intro.html">Introduction</a></li>
+            <li><a href="users.html">User's Guide</a></li>
+            <li><a href="system.html">System Documentation</a></li>
+            <li><a href="acknowledgements.html">Acknowledgements</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="docs-header" tabindex="-1">
+      <div class="container">
+        <h1>System Documentation</h1>
+        <p></p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div id="content" class="col-md-9">
+          
+
+<!-- dependencies -->
+<div class="section">
+        <h1>Dependencies</h1>
+
+        <p>Scythe depends on the following packages, they all were installed
+        through the node package manager.</p>
+
+        
+<pre class="hljs"><code><span class="hljs-keyword">var</span> fse       = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs-extra'</span>);
+<span class="hljs-keyword">var</span> path      = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+<span class="hljs-keyword">var</span> nunjucks  = <span class="hljs-built_in">require</span>(<span class="hljs-string">'nunjucks'</span>);
+<span class="hljs-keyword">var</span> highlight = <span class="hljs-built_in">require</span>(<span class="hljs-string">'highlight.js'</span>);
+<span class="hljs-keyword">var</span> yaml      = <span class="hljs-built_in">require</span>(<span class="hljs-string">'js-yaml'</span>);
+<span class="hljs-keyword">var</span> _         = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>);
+<span class="hljs-keyword">var</span> q         = <span class="hljs-built_in">require</span>(<span class="hljs-string">'q'</span>);
+<span class="hljs-keyword">var</span> program   = <span class="hljs-built_in">require</span>(<span class="hljs-string">'commander'</span>);
+<span class="hljs-keyword">var</span> promptly  = <span class="hljs-built_in">require</span>(<span class="hljs-string">'promptly'</span>);</code></pre>
+
+
+        <p>The following is a brief description of each module in conjuction
+        with some insights to what their role is within the system.</p>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Desription</th>
+      </tr>
+    </thead>
+          <tbody>
+            <tr>
+              <td class="mono">fs&#8209;extra</td>
+              <td>An extended version of Node's standard <code>fs</code> module. It
+                includes extra functionality such as the ability to copy files or
+                walk a directory.</td>
+      </tr>
+            <tr>
+              <td class="mono">path</td>
+              <td>Node's standard path module. It provides the facilities for
+                manipulating filesystem paths and doing things with them such
+                as determining their extension or coming up with relative paths
+                from one file to another.</td>
+      </tr>
+            <tr>
+              <td class="mono">nunjucks</td>
+              <td>The template engine used to process the html files that will be
+                the pages of the generated static site. As a referesher, a templating
+                engine is a program that process some html file or string that
+                can contain some non-standard syntax which gets expanded into
+                html in the output.</td>
+      </tr>
+            <tr>
+              <td class="mono">highlight.js</td>
+              <td>The server side version of highlightjs, a JavaScript program that,
+                when given a string of source code it returns a version of it that has
+                been marked up with html and that with, in conjuction with a css file
+                result in the given code to appear syntax highlighted in the browser,
+                much like it would do in any fancy text editor.</td>
+      </tr>
+            <tr>
+              <td class="mono">js-yaml</td>
+              <td>A processor of yaml (yaml is a file format used to
+                describe data, much like JSON), it is used in several parts
+                of the application where the system reads yaml file written
+                by the user with custom data.</td>
+      </tr>
+            <tr>
+              <td class="mono">underscore</td>
+              <td>A collection of utility functions which make writing
+                JavaScript code simpler and allow for the use of a more
+                functional-oriented programming style.</td>
+      </tr>
+            <tr>
+              <td class="mono">q</td>
+              <td>A library for implementeing the promise interface in our code. For
+                the unexperienced, the promise interface is a way to orchestrate
+                the run order of a several asynchronous functions.</td>
+      </tr>
+            <tr>
+              <td class="mono">commander</td>
+              <td>This node modules facilitiates the creation of command line
+              interfaces.</td>
+      </tr>
+            <tr>
+              <td class="mono">promptly</td>
+              <td>In some parts of the application we need to stop and ask
+                the user for confirmation or to give us some additional
+                data, this library implements methods for establishing
+                communication with the user.</td>
+      </tr>
+    </tbody>
+  </table>
+
+        <div class="alert alert-warning">Notice how the name of the required
+          modules does not necessary match the name of the variable used to
+          referenc them. For example, the module <code>fs-extra</code> is
+          referred to by the variable <code>fse</code>.</div>
+</div>
+
+<!-- manifest constants -->
+<div class="section">
+        <h1>Manifest constants</h1>
+
+        <h2><span class="mono">CONFIG_FILENAME</span></h2>
+        
+<pre class="hljs"><code><span class="hljs-keyword">var</span> CONFIG_FILENAME = <span class="hljs-string">'_config.yml'</span>;</code></pre>
+
+
+        <p>This is the name that the configuration file should have, if
+        there is one, within the current workig directory.</p>
+
+
+        <h2><span class="mono">MODULE_ROOT</span></h2>
+        
+<pre class="hljs"><code><span class="hljs-keyword">var</span> MODULE_ROOT = path.dirname(__filename);</code></pre>
+
+
+        <p>This is the absolute path of the directory where the scythe module
+        was installed within the user's system.</p>
+
+
+        <h2><span class="mono">FILE_TYPE_...</span></h2>
+        
+<pre class="hljs"><code><span class="hljs-keyword">var</span> FILE_TYPE_SPECIAL = <span class="hljs-string">'SPECIAL'</span>;
+<span class="hljs-keyword">var</span> FILE_TYPE_PAGE = <span class="hljs-string">'PAGE'</span>;
+<span class="hljs-keyword">var</span> FILE_TYPE_VERBATIM = <span class="hljs-string">'VERBATIM'</span>;</code></pre>
+
+
+        <p>These constants are used to identify each of the 3 possible types
+        that a file within the input dir can have.</p>
+
+        <h2><span class="mono">CODE_REGION_REGEX</span></h2>
+        
+<pre class="hljs"><code><span class="hljs-keyword">var</span> CODE_REGION_REGEX = _.mapValues(
+    fse.readJsonSync(path.join(MODULE_ROOT, <span class="hljs-string">'languages.json'</span>)), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>([
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            obj.symbol,                       <span class="hljs-comment">// Comment syntax</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'\\+{3}'</span>,                         <span class="hljs-comment">// Three consecutive plus symbols</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'(.+)'</span>,                           <span class="hljs-comment">// The name of the reference (capture)</span>
+            <span class="hljs-string">'\\n'</span>,                            <span class="hljs-comment">// Newline</span>
+            <span class="hljs-string">'([\\s\\S]+)\\n'</span>,                 <span class="hljs-comment">// The actual code (capture),</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            obj.symbol,                       <span class="hljs-comment">// Comment syntax</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'\\-{3}'</span>,                         <span class="hljs-comment">// Three consecutive minus symbols</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'\\1'</span>,                            <span class="hljs-comment">// Same name reference of the comment start</span>
+        ].join(<span class="hljs-string">''</span>), <span class="hljs-string">'g'</span>)
+    });</code></pre>
+
+
+        <p>This is a JavaScript plain object used as a dictionary that
+          maps file extensions, e.g. ".js", to the regular expressions that match
+          code references of type "block".</p>
+
+
+        <h2><span class="mono">SIMPLE_CODE_REGION_REGEX</span></h2>
+        
+<pre class="hljs"><code><span class="hljs-keyword">var</span> SIMPLE_CODE_REGION_REGEX = _.mapValues(
+    fse.readJsonSync(path.join(MODULE_ROOT, <span class="hljs-string">'languages.json'</span>)), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>([
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            obj.symbol,                       <span class="hljs-comment">// Comment syntax</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'\\+\\-'</span>,                         <span class="hljs-comment">// Three consecutive plus symbols</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'(.+)'</span>,                           <span class="hljs-comment">// The name of the reference (capture)</span>
+            <span class="hljs-string">'\\n'</span>,                            <span class="hljs-comment">// Newline</span>
+            <span class="hljs-string">'([\\s\\S]+?)\\n\\n'</span>,                 <span class="hljs-comment">// The actual code (capture),</span>
+        ].join(<span class="hljs-string">''</span>), <span class="hljs-string">'g'</span>)
+    });</code></pre>
+
+
+        <p>This is a JavaScript plain object used as a dictionary that
+          maps file extensions, e.g. ".js", to the regular expressions that match
+          code references of type "simple".</p>
+</div>
+
+<!-- cli -->
+<div class="section">
+        <h1>CLI program</h1>
+
+        <h2>Configuration</h2>
+        
+<pre class="hljs"><code>program
+    .version(<span class="hljs-string">'0.1.0'</span>);</code></pre>
+
+
+        <h2><span class="mono">mksite</span> command</h2>
+        
+<pre class="hljs"><code>program
+    .command(<span class="hljs-string">'mksite'</span>)
+    .description(<span class="hljs-string">'Makes a static site out of the files in the cwd.'</span>)
+    .action(main);</code></pre>
+
+
+        <h2><span class="mono">mktemplate</span> command</h2>
+        
+<pre class="hljs"><code>program
+    .command(<span class="hljs-string">'mktemplate'</span>)
+    .description(<span class="hljs-string">'Creates a "docs" directory with boilerplate.'</span>)
+    .action(copyBootstrapTemplate)</code></pre>
+
+</div>
+
+<!-- getConfiguration -->
+<div class="section">
+    <h1><span class="mono">getConfiguration()</span></h1>
+
+    
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getConfiguration</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">var</span> deferred = q.defer();
+
+    <span class="hljs-keyword">var</span> config = {};
+
+    fse.readFile(CONFIG_FILENAME, <span class="hljs-string">'utf-8'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, content</span>) </span>{
+        <span class="hljs-keyword">if</span> (err) {
+            consoleMessage(<span class="hljs-string">'warn'</span>, <span class="hljs-string">'Configuration file not found, using defaults.'</span>);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">try</span> {
+                _.extend(config, yaml.safeLoad(content));
+            } <span class="hljs-keyword">catch</span>(err) {
+                consoleMessage(<span class="hljs-string">'error'</span>, <span class="hljs-string">'Could not parse configuration file, using defaults.'</span>);
+            }
+        }
+
+        _.defaults(config, {
+            inputDirAbsPath: path.resolve(<span class="hljs-string">'.'</span>),
+            outputDir: <span class="hljs-string">'_site'</span>,
+            codeDir: <span class="hljs-string">'..'</span>
+        });
+
+        deferred.resolve(config);
+    });
+
+    <span class="hljs-keyword">return</span> deferred.promise;
+}</code></pre>
+
+
+    <p>This function returns a plain JavaScript object to be used as the
+      configuration object for making a static site out the current
+      directory. It operates by reading the <code>config.yml</code> file and parsing it into a
+      JavaScript object, for any configuration property that is not set in
+      the parsed object a default value is used.</p>
+
+    <p>This function implements the promise interface.</p>
+    
+</div>
+
+<!-- parseFiles -->
+<div class="section">
+  <h1><span class="mono">parseFiles()</span></h1>
+
+  
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseFiles</span>(<span class="hljs-params">config</span>) </span>{
+    <span class="hljs-keyword">var</span> deferred = q.defer();
+
+    <span class="hljs-keyword">var</span> SPECIAL_FILES_LIST = [
+        <span class="hljs-string">'_config.yml'</span>,
+        <span class="hljs-string">'_data'</span>,
+        <span class="hljs-string">'_layouts'</span>,
+        <span class="hljs-string">'_includes'</span>,
+        config.outputDir
+    ];
+
+    <span class="hljs-keyword">var</span> parsedFiles = [];
+
+    fse.walk(<span class="hljs-string">'.'</span>)
+        .on(<span class="hljs-string">'data'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fileDesc</span>) </span>{
+            fileDesc.pathRelativeToInputDir = path.relative(
+                config.inputDirAbsPath, fileDesc.path);
+            fileDesc.pathRelativeToOutputDir = path.join(
+                config.outputDir, fileDesc.pathRelativeToInputDir);
+            fileDesc.absoluteInputPath = fileDesc.path;
+            fileDesc.absoluteOutputPath = path.join(
+                config.inputDirAbsPath, fileDesc.pathRelativeToOutputDir);
+            fileDesc.category = categorizeFile(fileDesc.pathRelativeToInputDir);
+            parsedFiles.push(fileDesc);
+        })
+        .on(<span class="hljs-string">'end'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+            deferred.resolve(parsedFiles);
+        });
+
+    <span class="hljs-keyword">return</span> deferred.promise;
+
+    <span class="hljs-comment">// +++ categorizeFile()</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">categorizeFile</span>(<span class="hljs-params">filepath</span>) </span>{
+        <span class="hljs-keyword">if</span> (filepathIsSpecial(filepath)) {
+            <span class="hljs-keyword">return</span> FILE_TYPE_SPECIAL;
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (filepathIsPage(filepath)) {
+            <span class="hljs-keyword">return</span> FILE_TYPE_PAGE;
+        }
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> FILE_TYPE_VERBATIM;
+        }
+    }
+    <span class="hljs-comment">// --- categorizeFile()</span>
+
+    <span class="hljs-comment">// +++ filepathIsSpecial()</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">filepathIsSpecial</span>(<span class="hljs-params">filepath</span>) </span>{
+        <span class="hljs-keyword">var</span> root = filepath.split(path.sep)[<span class="hljs-number">0</span>];
+        <span class="hljs-keyword">return</span> _.contains(SPECIAL_FILES_LIST, root);
+    }
+    <span class="hljs-comment">// --- filepathIsSpecial()</span>
+
+    <span class="hljs-comment">// +++ filepathIsPage()</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">filepathIsPage</span>(<span class="hljs-params">filepath</span>) </span>{
+        <span class="hljs-keyword">return</span> path.extname(filepath) === <span class="hljs-string">'.html'</span>;
+    }
+    <span class="hljs-comment">// --- filepathIsPage()</span>
+}</code></pre>
+
+
+  <p>This function returns a list with what we call "file description
+    objects" for each of the files and subdirectories of the current
+    working directory. A file description object is a literal JavaScript
+    object that contains all the information that Scythe needs in order
+    to create a static site out the contents of the cwd. The properties
+    of the file description objects includes things such as the type of
+    file, or the absolute path to which it's render output should be
+    written to (if applicable).</p>
+
+  <p>The function make use of the <code>fse.walk</code> function,
+    which will walk down the current directory asynchronously,
+    emitting an event each time a file is encountered. With the
+    emitted event the method already provides an object with some
+    properties about the file in question, we just extend those
+    properties with our own to finish making a file description
+    object.</p>
+
+  <p>The function depends on a numbr of inner functions to determine
+    the type of file, this determination occurs during the
+    walking-down-the-dir process.  These inner functions are detailed
+    next.</p>
+
+  <h2><span class="mono">categorizeFile()</span></h2>
+
+  
+<pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">categorizeFile</span>(<span class="hljs-params">filepath</span>) </span>{
+        <span class="hljs-keyword">if</span> (filepathIsSpecial(filepath)) {
+            <span class="hljs-keyword">return</span> FILE_TYPE_SPECIAL;
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (filepathIsPage(filepath)) {
+            <span class="hljs-keyword">return</span> FILE_TYPE_PAGE;
+        }
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> FILE_TYPE_VERBATIM;
+        }
+    }</code></pre>
+
+
+  <p>This inner function makes tests the possible types of a file at a
+    given path. The tests are themselves functions. The first test
+    that returns truth will determine the type. The corresponding file
+    type constant is returned.</p>
+
+  <h2><span class="mono">filepathIsSpecial()</span></h2>
+
+  
+<pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">filepathIsSpecial</span>(<span class="hljs-params">filepath</span>) </span>{
+        <span class="hljs-keyword">var</span> root = filepath.split(path.sep)[<span class="hljs-number">0</span>];
+        <span class="hljs-keyword">return</span> _.contains(SPECIAL_FILES_LIST, root);
+    }</code></pre>
+
+
+  <p>This function testes whether the file at a given filepath is of
+    type "special", as a reminder, special-type files are those that
+    won't appear in the static site and are used to give additional data
+    or instructions to the Scythe program. The test is made by checking
+    if the filepaths base directory is contained within the list of
+    special file paths. Only the base name is checked as any child of a
+    special file will also be special.</p>
+
+  <h2><span class="mono">filepathIsPage()</span></h2>
+
+  
+<pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">filepathIsPage</span>(<span class="hljs-params">filepath</span>) </span>{
+        <span class="hljs-keyword">return</span> path.extname(filepath) === <span class="hljs-string">'.html'</span>;
+    }</code></pre>
+
+
+  <p>A file is determined to be of type page if it has the .html
+    extension. (This implies that that the file isn't already
+    determined to be of type special, so when testing the order
+    matters.</p>
+
+  <h2>Additional notes</h2>
+
+  <p>There is no test to find out if a file is of type verbatim, as
+    this will always be the case when the file is not of the other two
+    types.</p>
+
+  <p>This function implements the promise interface.</p>
+</div>
+
+<!-- makeSite -->
+<div class="section">
+  <h1><span class="mono">makeSite()</span></h1>  
+
+  
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeSite</span>(<span class="hljs-params">parsedFiles, config</span>) </span>{
+    <span class="hljs-keyword">var</span> deferred = q.defer();
+
+    <span class="hljs-comment">// +- template engine instatiation</span>
+    <span class="hljs-keyword">var</span> engine = <span class="hljs-keyword">new</span> nunjucks.Environment(
+        [<span class="hljs-keyword">new</span> nunjucks.FileSystemLoader(path.join(MODULE_ROOT, <span class="hljs-string">'html'</span>)),
+         <span class="hljs-keyword">new</span> nunjucks.FileSystemLoader(config.absoluteInputPath)]);
+
+    <span class="hljs-comment">// +- engine globals extension</span>
+    _.extend(engine.globals, {
+        highlight: highlight,
+        makeCodeRegionHtml: makeCodeRegionHtml
+    });
+
+    <span class="hljs-comment">// +- code regions store</span>
+    <span class="hljs-keyword">var</span> codeRegions = {};
+
+    <span class="hljs-comment">// +- template engine context</span>
+    <span class="hljs-keyword">var</span> context = {
+        data: parseDataDir(),
+    };
+
+    <span class="hljs-comment">// +- makeSite main loop</span>
+    _.each(parsedFiles, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fileDesc</span>) </span>{
+        <span class="hljs-keyword">switch</span> (fileDesc.category) {
+        <span class="hljs-keyword">case</span> FILE_TYPE_VERBATIM:
+            <span class="hljs-keyword">if</span> (fileDesc.stats.isDirectory()) {
+                fse.mkdirpSync(fileDesc.absoluteOutputPath);
+            }
+            <span class="hljs-keyword">else</span> {
+                fse.ensureDirSync(path.dirname(fileDesc.absoluteOutputPath));
+                fse.copySync(fileDesc.absoluteInputPath, fileDesc.absoluteOutputPath);
+            }
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> FILE_TYPE_PAGE:
+            <span class="hljs-keyword">try</span> {
+                consoleMessage(<span class="hljs-string">'log'</span>, <span class="hljs-string">'\nRendering page-type file "'</span> + fileDesc.pathRelativeToInputDir + <span class="hljs-string">'"'</span>);
+                <span class="hljs-keyword">var</span> rawHTML = fse.readFileSync(fileDesc.absoluteInputPath, <span class="hljs-string">'utf-8'</span>);
+                <span class="hljs-keyword">var</span> renderedHTML = engine.renderString(rawHTML, context);
+                fse.writeFileSync(fileDesc.absoluteOutputPath, renderedHTML);
+                consoleMessage(<span class="hljs-string">'log'</span>, <span class="hljs-string">'OK'</span>);
+            } <span class="hljs-keyword">catch</span> (err) {
+                consoleMessage(<span class="hljs-string">'error'</span>, err.toString());
+            }
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> FILE_TYPE_SPECIAL:
+            <span class="hljs-comment">// DO NOTHING</span>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
+            consoleMessage(<span class="hljs-string">'error'</span>, <span class="hljs-string">'Unexpected file type "'</span> + fileDesc.category + <span class="hljs-string">'" of file "'</span> + fileDesc.pathRelativeToInputDir +<span class="hljs-string">'"'</span>);
+        }
+    });
+
+    deferred.resolve();
+
+    <span class="hljs-keyword">return</span> deferred.promise;
+
+    <span class="hljs-comment">// +++ parseDataDir()</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseDataDir</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">var</span> dataFiles;
+
+        <span class="hljs-keyword">try</span> {
+            dataFiles = fse.readdirSync(<span class="hljs-string">'_data'</span>);
+        } <span class="hljs-keyword">catch</span>(err) {
+            <span class="hljs-comment">// Do nothing</span>
+        }
+
+        <span class="hljs-keyword">var</span> data = {};
+
+        _.each(dataFiles, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">file</span>) </span>{
+            <span class="hljs-keyword">if</span> (!(path.extname(file) === <span class="hljs-string">'.yml'</span>)) <span class="hljs-keyword">return</span>;
+            <span class="hljs-keyword">try</span> {
+                data[path.basename(file, <span class="hljs-string">'.yml'</span>)] = yaml.safeLoad(fse.readFileSync(path.join(<span class="hljs-string">'_data'</span>, file)));
+            } <span class="hljs-keyword">catch</span>(err) {
+                consoleMessage(<span class="hljs-string">'error'</span>, <span class="hljs-string">'Error! Could not open or parse data file "'</span> + file + <span class="hljs-string">'".'</span>);
+            }
+        });
+        <span class="hljs-keyword">return</span> data;
+    }
+    <span class="hljs-comment">// --- parseDataDir()</span>
+
+    <span class="hljs-comment">// +++ getCodeRegion()</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCodeRegion</span>(<span class="hljs-params">name, file</span>) </span>{
+        <span class="hljs-keyword">if</span> (_.isUndefined(codeRegions[file])) {
+            codeRegions[file] = getCodeRegionsOfFile(file);
+        }
+
+        <span class="hljs-keyword">var</span> referencedCode = _.get(codeRegions, [file, name], <span class="hljs-literal">undefined</span>);
+        <span class="hljs-keyword">var</span> errorMessage = <span class="hljs-string">'ERROR! Code region "'</span> + name + <span class="hljs-string">'" of file "'</span> + file + <span class="hljs-string">'" not found.'</span>
+
+        <span class="hljs-keyword">if</span> (_.isUndefined(referencedCode)) {
+            consoleMessage(<span class="hljs-string">'error'</span>, errorMessage);
+            <span class="hljs-keyword">return</span> errorMessage;
+        }
+
+        <span class="hljs-keyword">return</span> referencedCode;
+    }
+    <span class="hljs-comment">// --- getCodeRegion()</span>
+
+    <span class="hljs-comment">// +++ getCodeRegionsOfFile()</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCodeRegionsOfFile</span>(<span class="hljs-params">file</span>) </span>{
+        <span class="hljs-keyword">var</span> ext = path.extname(file);
+        <span class="hljs-keyword">var</span> reBlock = CODE_REGION_REGEX[ext];
+        <span class="hljs-keyword">var</span> reSimple = SIMPLE_CODE_REGION_REGEX[ext];
+        <span class="hljs-keyword">var</span> content = <span class="hljs-string">''</span>;
+        <span class="hljs-keyword">var</span> regions = {};
+
+        <span class="hljs-keyword">try</span> {
+            content = fse.readFileSync(path.join(config.codeDir, file), <span class="hljs-string">'utf-8'</span>);
+        } <span class="hljs-keyword">catch</span>(err) {
+            <span class="hljs-comment">// DO NOTHING;</span>
+        }
+
+        <span class="hljs-keyword">while</span> ((match = reBlock.exec(content))) {
+            <span class="hljs-keyword">var</span> name = match[<span class="hljs-number">1</span>];
+            <span class="hljs-keyword">var</span> code = match[<span class="hljs-number">2</span>];
+            regions[name] = code;
+            <span class="hljs-comment">// +- getCodeRegionsOfFile recursive region enabler</span>
+            reBlock.lastIndex =
+                reBlock.lastIndex - (match[<span class="hljs-number">0</span>].length - match[<span class="hljs-number">0</span>].split(<span class="hljs-regexp">/[\n\r]/</span>)[<span class="hljs-number">0</span>].length) + <span class="hljs-number">1</span>;
+
+        }
+        
+        <span class="hljs-keyword">while</span> ((match = reSimple.exec(content))) {
+            <span class="hljs-keyword">var</span> name = match[<span class="hljs-number">1</span>];
+            <span class="hljs-keyword">var</span> code = match[<span class="hljs-number">2</span>];
+            regions[name] = code;
+        }
+
+        <span class="hljs-keyword">return</span> regions;
+    }
+    <span class="hljs-comment">// --- getCodeRegionsOfFile()</span>
+
+    <span class="hljs-comment">// +++ makeCodeRegionHtml()</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeCodeRegionHtml</span>(<span class="hljs-params">name, file</span>) </span>{
+        <span class="hljs-keyword">var</span> lang = path.extname(file).slice(<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">var</span> code = getCodeRegion(name, file);
+        <span class="hljs-keyword">return</span> highlight.highlight(lang, code).value;
+    }
+    <span class="hljs-comment">// --- makeCodeRegionHtml()</span>
+}</code></pre>
+
+
+  <p>The <code>makeSite()</code> function takes the result of <code>parseFiles()</code>
+    and the configuration object and actually creates the static site, with this we
+    mean that it creates the static site directory, copies the verbatim files and
+    writes the rendered output of the page-type files.</p>
+
+  <p>The first thing that is done is instatiate the template
+    engine. In it's constructor we pass a list of FileSystemLoaders,
+    these are pointers to the directories where the template engine
+    will look for the templates that are extended, included or imported
+    from the page-type html files.</p>
+
+  
+<pre class="hljs"><code>    <span class="hljs-keyword">var</span> engine = <span class="hljs-keyword">new</span> nunjucks.Environment(
+        [<span class="hljs-keyword">new</span> nunjucks.FileSystemLoader(path.join(MODULE_ROOT, <span class="hljs-string">'html'</span>)),
+         <span class="hljs-keyword">new</span> nunjucks.FileSystemLoader(config.absoluteInputPath)]);</code></pre>
+
+
+  <p>Then we extend the <code>engine.globals</code> property to make
+    some other JavaScript objects and functions callable from the
+    templates.</p>
+
+  
+<pre class="hljs"><code>    _.extend(engine.globals, {
+        highlight: highlight,
+        makeCodeRegionHtml: makeCodeRegionHtml
+    });</code></pre>
+
+
+  <p>An empty object is assigned to the <code>codeRegions</code> local
+    variable. This will serve as a two-tier dictionary that will store
+    the code regions of each of the source files. The first level will
+    be the file name, and the second level will be the code region
+    name. This object will be lazily populated whenever a code region
+    is being referenced.</p>
+
+  
+<pre class="hljs"><code>    <span class="hljs-keyword">var</span> context = {
+        data: parseDataDir(),
+    };</code></pre>
+
+
+  <p>Next we create an object and assign it to the <code>context</code> local
+    variable, this object will be passed alongside with a template
+    string whenever we are rendering a page-type file, it's purpose
+    it's to make data available to the user in the template through
+    <a href="https://mozilla.github.io/nunjucks/templating.html">nunjucks</a> syntax.</p>
+
+  
+<pre class="hljs"><code>    <span class="hljs-keyword">var</span> codeRegions = {};</code></pre>
+
+
+  <p>Then we begin iterating through the list of file description
+    objects (see the <code>parseFiles()</code> method), and take
+    action depending on it's type. Special-type files are ignored,
+    page-type files are read, rendered with the template engine and
+    written to their output destinations and verbatim files are copied
+    into the output directory.</p>
+
+  
+<pre class="hljs"><code>    _.each(parsedFiles, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fileDesc</span>) </span>{
+        <span class="hljs-keyword">switch</span> (fileDesc.category) {
+        <span class="hljs-keyword">case</span> FILE_TYPE_VERBATIM:
+            <span class="hljs-keyword">if</span> (fileDesc.stats.isDirectory()) {
+                fse.mkdirpSync(fileDesc.absoluteOutputPath);
+            }
+            <span class="hljs-keyword">else</span> {
+                fse.ensureDirSync(path.dirname(fileDesc.absoluteOutputPath));
+                fse.copySync(fileDesc.absoluteInputPath, fileDesc.absoluteOutputPath);
+            }
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> FILE_TYPE_PAGE:
+            <span class="hljs-keyword">try</span> {
+                consoleMessage(<span class="hljs-string">'log'</span>, <span class="hljs-string">'\nRendering page-type file "'</span> + fileDesc.pathRelativeToInputDir + <span class="hljs-string">'"'</span>);
+                <span class="hljs-keyword">var</span> rawHTML = fse.readFileSync(fileDesc.absoluteInputPath, <span class="hljs-string">'utf-8'</span>);
+                <span class="hljs-keyword">var</span> renderedHTML = engine.renderString(rawHTML, context);
+                fse.writeFileSync(fileDesc.absoluteOutputPath, renderedHTML);
+                consoleMessage(<span class="hljs-string">'log'</span>, <span class="hljs-string">'OK'</span>);
+            } <span class="hljs-keyword">catch</span> (err) {
+                consoleMessage(<span class="hljs-string">'error'</span>, err.toString());
+            }
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> FILE_TYPE_SPECIAL:
+            <span class="hljs-comment">// DO NOTHING</span>
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
+            consoleMessage(<span class="hljs-string">'error'</span>, <span class="hljs-string">'Unexpected file type "'</span> + fileDesc.category + <span class="hljs-string">'" of file "'</span> + fileDesc.pathRelativeToInputDir +<span class="hljs-string">'"'</span>);
+        }
+    });</code></pre>
+
+
+  <p>In addition, the function makes use of inner functions to accomplish
+    the tasks of parsing the contents of the special <code>_data/</code> directory
+    and to parse and retrieve code regions. These inner functions are
+    detailed next.</p>
+
+  <h2><span class="mono">parseDataDir()</span></h2>
+
+  
+<pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseDataDir</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">var</span> dataFiles;
+
+        <span class="hljs-keyword">try</span> {
+            dataFiles = fse.readdirSync(<span class="hljs-string">'_data'</span>);
+        } <span class="hljs-keyword">catch</span>(err) {
+            <span class="hljs-comment">// Do nothing</span>
+        }
+
+        <span class="hljs-keyword">var</span> data = {};
+
+        _.each(dataFiles, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">file</span>) </span>{
+            <span class="hljs-keyword">if</span> (!(path.extname(file) === <span class="hljs-string">'.yml'</span>)) <span class="hljs-keyword">return</span>;
+            <span class="hljs-keyword">try</span> {
+                data[path.basename(file, <span class="hljs-string">'.yml'</span>)] = yaml.safeLoad(fse.readFileSync(path.join(<span class="hljs-string">'_data'</span>, file)));
+            } <span class="hljs-keyword">catch</span>(err) {
+                consoleMessage(<span class="hljs-string">'error'</span>, <span class="hljs-string">'Error! Could not open or parse data file "'</span> + file + <span class="hljs-string">'".'</span>);
+            }
+        });
+        <span class="hljs-keyword">return</span> data;
+    }</code></pre>
+
+
+  <p>When the user has set up at least one .yml file inside of the special
+    <code>_data/</code> directory, this function will return an object
+    whose keys are the names of each of the .yml files (without the
+    extension) and whose values are be the result obtained from
+    parsing the file's contents.</p>
+
+  <p>As a reminder, the <code>_data/</code> directory is there so that
+    the user can put information to reference throughout their
+    page-type files. For example, for all the links to third-party
+    sites in this documentation we aren't actually typing the anchors
+    href value, instead we are referencing by a given name a url we
+    have set up in the <code>_data/links.yml</code> file.
+  </p>
+
+  <h2><span class="mono">getCodeRegion()</span></h2>
+
+  
+<pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCodeRegion</span>(<span class="hljs-params">name, file</span>) </span>{
+        <span class="hljs-keyword">if</span> (_.isUndefined(codeRegions[file])) {
+            codeRegions[file] = getCodeRegionsOfFile(file);
+        }
+
+        <span class="hljs-keyword">var</span> referencedCode = _.get(codeRegions, [file, name], <span class="hljs-literal">undefined</span>);
+        <span class="hljs-keyword">var</span> errorMessage = <span class="hljs-string">'ERROR! Code region "'</span> + name + <span class="hljs-string">'" of file "'</span> + file + <span class="hljs-string">'" not found.'</span>
+
+        <span class="hljs-keyword">if</span> (_.isUndefined(referencedCode)) {
+            consoleMessage(<span class="hljs-string">'error'</span>, errorMessage);
+            <span class="hljs-keyword">return</span> errorMessage;
+        }
+
+        <span class="hljs-keyword">return</span> referencedCode;
+    }</code></pre>
+
+
+  <p>This function parameters are the name of a code region, and the
+    file where the code region should be located at. When called, the
+    function checks the closure-accessible variable <code>codeRegions</code>'s
+    attribute that matches the given file, if it is undefined then the
+    function will set it to the result of another function that will
+    return a dictionary of all the code regions in the supplied
+    file. In any case, the code region is looked up first by file and
+    then by name, should it not be present an error message is printed
+    to the console and put in the rendered html itself.
+  </p>
+
+  <h2><span class="mono">getCodeRegionsOfFile()</span></h2>
+
+  
+<pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCodeRegionsOfFile</span>(<span class="hljs-params">file</span>) </span>{
+        <span class="hljs-keyword">var</span> ext = path.extname(file);
+        <span class="hljs-keyword">var</span> reBlock = CODE_REGION_REGEX[ext];
+        <span class="hljs-keyword">var</span> reSimple = SIMPLE_CODE_REGION_REGEX[ext];
+        <span class="hljs-keyword">var</span> content = <span class="hljs-string">''</span>;
+        <span class="hljs-keyword">var</span> regions = {};
+
+        <span class="hljs-keyword">try</span> {
+            content = fse.readFileSync(path.join(config.codeDir, file), <span class="hljs-string">'utf-8'</span>);
+        } <span class="hljs-keyword">catch</span>(err) {
+            <span class="hljs-comment">// DO NOTHING;</span>
+        }
+
+        <span class="hljs-keyword">while</span> ((match = reBlock.exec(content))) {
+            <span class="hljs-keyword">var</span> name = match[<span class="hljs-number">1</span>];
+            <span class="hljs-keyword">var</span> code = match[<span class="hljs-number">2</span>];
+            regions[name] = code;
+            <span class="hljs-comment">// +- getCodeRegionsOfFile recursive region enabler</span>
+            reBlock.lastIndex =
+                reBlock.lastIndex - (match[<span class="hljs-number">0</span>].length - match[<span class="hljs-number">0</span>].split(<span class="hljs-regexp">/[\n\r]/</span>)[<span class="hljs-number">0</span>].length) + <span class="hljs-number">1</span>;
+
+        }
+        
+        <span class="hljs-keyword">while</span> ((match = reSimple.exec(content))) {
+            <span class="hljs-keyword">var</span> name = match[<span class="hljs-number">1</span>];
+            <span class="hljs-keyword">var</span> code = match[<span class="hljs-number">2</span>];
+            regions[name] = code;
+        }
+
+        <span class="hljs-keyword">return</span> regions;
+    }</code></pre>
+
+
+  <p>This function opens the given file and finds all the matches for the two
+    regular expressions that represent a code region demarcation. From the capture
+    groups of the regular expresions matches a regions object is populated which is
+    what will ultimately be returned.</p>
+
+  <p>Initially a serious bug was present in this function as it did
+    not take into consideration code regions that might appear inside
+    other code regions. This was the case because the way the regular
+    expresion match loop works is that it starts the next search at
+    the ending of the previous match, it never checked
+    inbetween. To correct this the regular expression's <code>lastIndex</code> attribute
+    is set not at the ending position of the match, but at the position where the starting
+    comment of the code region finishes.</p>
+
+  
+<pre class="hljs"><code>            reBlock.lastIndex =
+                reBlock.lastIndex - (match[<span class="hljs-number">0</span>].length - match[<span class="hljs-number">0</span>].split(<span class="hljs-regexp">/[\n\r]/</span>)[<span class="hljs-number">0</span>].length) + <span class="hljs-number">1</span>;</code></pre>
+
+
+  <p>If you are unfamiliar with the syntaxes and types of code regions make sure to
+    revise the <a href="users.html">User's guide</a> first.</p>
+
+  <h2><span class="mono">makeCodeRegionHtml()</span></h2>
+
+  
+<pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeCodeRegionHtml</span>(<span class="hljs-params">name, file</span>) </span>{
+        <span class="hljs-keyword">var</span> lang = path.extname(file).slice(<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">var</span> code = getCodeRegion(name, file);
+        <span class="hljs-keyword">return</span> highlight.highlight(lang, code).value;
+    }</code></pre>
+
+
+  <p>This function takes as parameters the name of code region and the file where
+    the code region should be located at. It returns the corresponding code but marked
+    up with html (this is done by using the highlight.js library). The returned html,
+    in conjunction with a css stylesheet will make the code appear syntax highlighted
+    in the browser.</p>
+</div>
+
+<!-- copyBootstrapTemplate -->
+<div class="section">
+  <h1><span class="mono">copyBootstrapTemplate()</span></h1>
+
+  
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">copyBootstrapTemplate</span>(<span class="hljs-params"></span>) </span>{
+    fse.stat(<span class="hljs-string">'docs'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, stats</span>) </span>{
+        <span class="hljs-keyword">if</span> (!err &amp;&amp; stats.isDirectory()) {
+            promptly.confirm(<span class="hljs-string">'Dir "docs" already exists, continuing will delete it first. Continue? (y/n) '</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, confirmed</span>) </span>{
+                <span class="hljs-keyword">if</span> (confirmed) {
+                    fse.removeSync(<span class="hljs-string">'docs'</span>);
+                    fse.copySync(path.join(MODULE_ROOT, <span class="hljs-string">'bootstrap_template'</span>), <span class="hljs-string">'docs'</span>);
+                }
+            });
+        } <span class="hljs-keyword">else</span> {
+            fse.copySync(path.join(MODULE_ROOT, <span class="hljs-string">'bootstrap_template'</span>), <span class="hljs-string">'docs'</span>);
+        }
+    });
+}</code></pre>
+
+
+  <p>This function copies the bootstrap's website lookalike input
+  directory template into the current working directory with the name
+  "docs". However, it first checks whether a "docs" directory already
+  exists, in which case the user is prompted for it's overriding or
+  the cancellation of the action.</p>
+</div>
+
+
+        </div>
+        <div id="toc" class="col-md-3">
+        </div>
+      </div>
+    </div>
+
+    <script src="public/jquery.min.js"></script>
+    <script src="public/toc.js"></script>
+    <script src="public/bootstrap/js/bootstrap.min.js"></script>
+
+    <script>
+     $('#toc').toc({
+       'selectors': 'h1,h2,h3',
+       'container': '#content',
+       'smoothScrolling': true,
+       'prefix': 'toc',
+       'highlightOffset': 100,
+       'anchorName': function(i, heading, prefix) {
+         return prefix+i;
+       },
+       'headerText': function(i, heading, $heading) {
+         return $heading.html();
+       }
+     });
+    </script>
+  </body>
+</html>

@@ -2,6 +2,7 @@ body {
     margin-bottom: 200px;
 } 
 
+.docs-masthead,
 .docs-header {
     margin-bottom: 40px;
     font-size: 20px;
@@ -67,12 +68,12 @@ pre.hljs > code {
 }
 
 .mono {
-    padding: 2px 4px;
     font-size: 90%;
+    font-weight: 700;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-div[id] > h1 {
+div.section > h1 {
     padding-top: 20px;
     margin-top: 0;
     padding-bottom: 9px;
@@ -117,4 +118,41 @@ table {
 .toc-h3 {
     padding-left: 28px;
     font-weight: 500;
+}
+
+@media (min-width: 768px) {
+    .docs-masthead {
+        padding: 80px 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .docs-masthead .lead {
+        font-size: 24px;
+    }
+}
+
+@media (min-width: 992px) {
+    .docs-masthead .lead {
+        width: 80%;
+        font-size: 30px !important;
+    }
+}
+
+.docs-masthead .lead {
+    margin: 0 auto 30px;
+    font-size: 20px;
+}
+
+.docs-masthead .lead,
+.docs-masthead h1 {
+    color: #fff;
+}
+
+.docs-masthead h1 {
+    font-size: 60px;
+}
+
+.docs-nav .navbar-toggle .icon-bar {
+    background-color: #563d7c;
 }
