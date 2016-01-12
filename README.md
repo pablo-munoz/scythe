@@ -1,1 +1,1 @@
-Documentation at [[http://pablo-munoz.github.io/scythe]]
+Documentation at http://pablo-munoz.github.io/scythe.

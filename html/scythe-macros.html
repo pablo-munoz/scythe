@@ -1,0 +1,8 @@
+{% macro reference(name, file) %}
+<pre class="hljs"><code>{{ makeCodeRegionHtml(name, file) | safe }}</code></pre>
+{% endmacro %}
+
+
+{% macro block(lang='text') %}
+<pre class="hljs"><code>{{ highlight.highlight(lang, caller().trim()).value | safe }}</code></pre>
+{% endmacro %}

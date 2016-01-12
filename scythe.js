@@ -24,20 +24,8 @@ var FILE_TYPE_SPECIAL = 'SPECIAL';
 var FILE_TYPE_PAGE = 'PAGE';
 var FILE_TYPE_VERBATIM = 'VERBATIM';
 
-
-// +- CODE_REF_IN_HTML_REGEX
-var CODE_REF_IN_HTML_REGEX = new RegExp([
-    '\\s*',                         // Zero or more spaces
-    '<ref\\s+',                     // "ref" tag opening
-    'name="(.+)"',                  // The name of the reference (capture)
-    '\\s*',                         // Zero or more spaces
-    'file="(.+)"',                  // File where the reference is (capture)
-    '\\s*',                         // Zero or more spaces
-    '>'                             // Tag close
-].join(''), 'g');
-
-// +- BLOCK_CODE_REF_IN_SRC_REGEX
-var BLOCK_CODE_REF_IN_SRC_REGEX = _.mapValues(
+// +- CODE_REGION_REGEX
+var CODE_REGION_REGEX = _.mapValues(
     fse.readJsonSync(path.join(MODULE_ROOT, 'languages.json')), function(obj) {
         return new RegExp([
             '[^\\S\\n]*',
@@ -57,8 +45,8 @@ var BLOCK_CODE_REF_IN_SRC_REGEX = _.mapValues(
         ].join(''), 'g')
     });
 
-// +- SIMPLE_CODE_REF_IN_SRC_REGEX
-var SIMPLE_CODE_REF_IN_SRC_REGEX = _.mapValues(
+// +- SIMPLE_CODE_REGION_REGEX
+var SIMPLE_CODE_REGION_REGEX = _.mapValues(
     fse.readJsonSync(path.join(MODULE_ROOT, 'languages.json')), function(obj) {
         return new RegExp([
             '[^\\S\\n]*',
@@ -83,7 +71,8 @@ function main() {
             fse.emptyDirSync(config.outputDir);
             parseFiles(config)
                 .then(function(parsedFiles) {
-                    return makeSite(parsedFiles, config);
+                    return makeSite(parsedFiles, config)
+                        .catch(function(err) { consoleMessage('error', err); });
                 })
                 .then(function() {
                     consoleMessage('log', 'Static site generation finished.');
@@ -100,7 +89,7 @@ function main() {
 // --- fn main
 
 
-// +++ fn getConfiguration
+// +++ getConfiguration()
 function getConfiguration() {
     var deferred = q.defer();
 
@@ -128,11 +117,11 @@ function getConfiguration() {
 
     return deferred.promise;
 }
-// --- fn getConfiguration
+// --- getConfiguration()
 
 
 
-// +++ fn parseFiles
+// +++ parseFiles()
 function parseFiles(config) {
     var deferred = q.defer();
 
@@ -164,7 +153,7 @@ function parseFiles(config) {
 
     return deferred.promise;
 
-    // +++ fn categorizeFile
+    // +++ categorizeFile()
     function categorizeFile(filepath) {
         if (filepathIsSpecial(filepath)) {
             return FILE_TYPE_SPECIAL;
@@ -176,35 +165,49 @@ function parseFiles(config) {
             return FILE_TYPE_VERBATIM;
         }
     }
-    // --- fn categorizeFile
+    // --- categorizeFile()
 
-    // +++ fn filepathIsSpecial
+    // +++ filepathIsSpecial()
     function filepathIsSpecial(filepath) {
         var root = filepath.split(path.sep)[0];
         return _.contains(SPECIAL_FILES_LIST, root);
     }
-    // --- fn filepathIsSpecial
+    // --- filepathIsSpecial()
 
-    // +++ fn filepathIsPage
+    // +++ filepathIsPage()
     function filepathIsPage(filepath) {
         return path.extname(filepath) === '.html';
     }
-    // --- fn filepathIsPage
+    // --- filepathIsPage()
 }
-// --- fn parseFiles
+// --- parseFiles()
 
 
 
-// +++ fn makeSite
+// +++ makeSite()
 function makeSite(parsedFiles, config) {
     var deferred = q.defer();
 
-    var engine = new nunjucks.Environment(new nunjucks.FileSystemLoader(config.absoluteInputPath));
-    var codeReferences = {};
+    // +- template engine instatiation
+    var engine = new nunjucks.Environment(
+        [new nunjucks.FileSystemLoader(path.join(MODULE_ROOT, 'html')),
+         new nunjucks.FileSystemLoader(config.absoluteInputPath)]);
+
+    // +- engine globals extension
+    _.extend(engine.globals, {
+        highlight: highlight,
+        makeCodeRegionHtml: makeCodeRegionHtml
+    });
+
+    // +- code regions store
+    var codeRegions = {};
+
+    // +- template engine context
     var context = {
-        data: parseDataDir()
+        data: parseDataDir(),
     };
 
+    // +- makeSite main loop
     _.each(parsedFiles, function(fileDesc) {
         switch (fileDesc.category) {
         case FILE_TYPE_VERBATIM:
@@ -221,8 +224,7 @@ function makeSite(parsedFiles, config) {
                 consoleMessage('log', '\nRendering page-type file "' + fileDesc.pathRelativeToInputDir + '"');
                 var rawHTML = fse.readFileSync(fileDesc.absoluteInputPath, 'utf-8');
                 var renderedHTML = engine.renderString(rawHTML, context);
-                var renderedHTMLWithCode = resolveCodeReferences(renderedHTML);
-                fse.writeFileSync(fileDesc.absoluteOutputPath, renderedHTMLWithCode);
+                fse.writeFileSync(fileDesc.absoluteOutputPath, renderedHTML);
                 consoleMessage('log', 'OK');
             } catch (err) {
                 consoleMessage('error', err.toString());
@@ -240,12 +242,12 @@ function makeSite(parsedFiles, config) {
 
     return deferred.promise;
 
-
+    // +++ parseDataDir()
     function parseDataDir() {
         var dataFiles;
 
         try {
-            fse.readdirSync('_data');
+            dataFiles = fse.readdirSync('_data');
         } catch(err) {
             // Do nothing
         }
@@ -262,25 +264,16 @@ function makeSite(parsedFiles, config) {
         });
         return data;
     }
+    // --- parseDataDir()
 
-    function resolveCodeReferences(html) {
-        return html.replace(CODE_REF_IN_HTML_REGEX, function(match, name, file) {
-            var lang = path.extname(file).slice(1);
-            return [
-                '<pre class="hljs"><code>',
-                highlight.highlight(lang, getCodeOfReference(name, file)).value,
-                '</pre></code>'
-            ].join('');
-        });
-    }
-
-    function getCodeOfReference(name, file) {
-        if (_.isUndefined(codeReferences[file])) {
-            makeCodeReferencesForFile(file);
+    // +++ getCodeRegion()
+    function getCodeRegion(name, file) {
+        if (_.isUndefined(codeRegions[file])) {
+            codeRegions[file] = getCodeRegionsOfFile(file);
         }
 
-        var referencedCode = _.get(codeReferences, [file, name], undefined);
-        var errorMessage = 'ERROR! Code reference "' + name + '" of file "' + file + '" not found.'
+        var referencedCode = _.get(codeRegions, [file, name], undefined);
+        var errorMessage = 'ERROR! Code region "' + name + '" of file "' + file + '" not found.'
 
         if (_.isUndefined(referencedCode)) {
             consoleMessage('error', errorMessage);
@@ -289,12 +282,15 @@ function makeSite(parsedFiles, config) {
 
         return referencedCode;
     }
+    // --- getCodeRegion()
 
-    function makeCodeReferencesForFile(file) {
+    // +++ getCodeRegionsOfFile()
+    function getCodeRegionsOfFile(file) {
         var ext = path.extname(file);
-        var reBlock = BLOCK_CODE_REF_IN_SRC_REGEX[ext];
-        var reSimple = SIMPLE_CODE_REF_IN_SRC_REGEX[ext];
+        var reBlock = CODE_REGION_REGEX[ext];
+        var reSimple = SIMPLE_CODE_REGION_REGEX[ext];
         var content = '';
+        var regions = {};
 
         try {
             content = fse.readFileSync(path.join(config.codeDir, file), 'utf-8');
@@ -305,31 +301,45 @@ function makeSite(parsedFiles, config) {
         while ((match = reBlock.exec(content))) {
             var name = match[1];
             var code = match[2];
-            _.set(codeReferences, [file, name], code);
+            regions[name] = code;
+            // +- getCodeRegionsOfFile recursive region enabler
             reBlock.lastIndex =
                 reBlock.lastIndex - (match[0].length - match[0].split(/[\n\r]/)[0].length) + 1;
+
         }
         
         while ((match = reSimple.exec(content))) {
             var name = match[1];
             var code = match[2];
-            _.set(codeReferences, [file, name], code);
+            regions[name] = code;
         }
+
+        return regions;
     }
+    // --- getCodeRegionsOfFile()
+
+    // +++ makeCodeRegionHtml()
+    function makeCodeRegionHtml(name, file) {
+        var lang = path.extname(file).slice(1);
+        var code = getCodeRegion(name, file);
+        return highlight.highlight(lang, code).value;
+    }
+    // --- makeCodeRegionHtml()
 }
-// --- fn makeSite
+// --- makeSite()
 
 
 
-// +++ fn consoleMessage
+// +++ consoleMessage()
 function consoleMessage(type, message) {
     var promptedMessage = 'scythe> ' + message.split(/[\n\r]/).join('\nscythe> ');
     console[type](promptedMessage);
 }
-// --- fn consoleMessage
+// --- consoleMessage()
 
 
 
+// +++ copyBootstrapTemplate()
 function copyBootstrapTemplate() {
     fse.stat('docs', function(err, stats) {
         if (!err && stats.isDirectory()) {
@@ -344,6 +354,7 @@ function copyBootstrapTemplate() {
         }
     });
 }
+// --- copyBootstrapTemplate()
 
 
 // +- cli configuration
