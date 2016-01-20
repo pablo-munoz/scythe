@@ -9,113 +9,78 @@
 
   <p>Scythe is a NodeJS program that runs in the command line and
     whose purpose is to create static websites. It also has some
-    literate programming capabilities (sort of).</p>
-
-  <p>The part of Scythe that is a static website generator is very
-    similar to other similar programs like
-    <a href="https://jekyllrb.com/">jekyll</a> and <a href="http://wintersmith.io/">wintersmith</a>. However
-    it is also different from the alternatives it is limited to only
-    understanding html files, so you will not be able to write your
-    pages in markdown or any other quasi-html.</p>
-
-  <p>When we say the program has some literate programming
-  functionality we mean that it is possible for the user to put a
-  special html tag in the html files they write. These html tags, that
-  we call markup code references (because they are references to code
-  that are in a markup file), don't actually appear in the html output
-  of the generated static site, in their place, the program copies the
-  lines of code they reference and marks it up with some other html.
-  This has the effect of making the referenced code appear in the
-  browser, inside a box and syntax colored as it would be in a
-  programming IDE.</p>
+    functionalities that can be used to make literate programming
+    documents.</p>
 </div>
 
 <div>
-  <h1>More on literate programming</h1>
+  <h1>Literate programming in 30 seconds</h1>
 
-  <p>Literate programming is a philosophy for writing software that
-    emphasizes documentation. But even the term "documentation" falls
-    short of what literate programming intends to do, since most
-    documentation in the industry is some kind of program-generated
-    description of the classes and functions of a computer program. In
-    literate programming, writing a software system is more like writing
-    a book that has embedded code, but whose ultimate purpose is to
-    comunicate ideas from human to human.</p>
+  <blockquote>
+    <p>Literate programming is an approach to programming introduced
+    by Donald Knuth in which a program is given as an explanation of
+    the program logic in a natural language, such as English,
+    interspersed with snippets of macros and traditional source code,
+    from which a compilable source code can be generated.</p>
+
+    <footer>Wikipedia</footer>
+  </blockquote>
+
+  <p>Also check out this <a href="https://www.youtube.com/watch?v=Av0PQDVTP4A">video</a>
+    which we regard as very insightful into why literate programming
+    is important.</p>
+
 </div>
 
 <div>
   <h1>Motivation</h1>
 
-  <p>This program was born out of my desire to create literate
-    programming documents for my software systems. Initially I
-    attempted to write literate programs in LaTeX, however the
-    resulting PDF files turned out to be a bit of a turnoff, since I
-    had grown accostumed to the great online documentation of some
-    technologies such as the Twitter's Bootstrap CSS framework and the
-    NodeJS standard libraries documentation. In addition, since much
-    of my work was about web applications and I had been championing
-    the superiority of the browser as a medium, it seemed like a bit
-    of a disconnect that the documentation of my software wasn't
-    itself a webpage.</p>
+  <p>This program was born out of the necessity of writing
+    documentation for software projects. Since we adhere to the
+    literate programming philosophy, we wanted our documentation to
+    really get into the nitty-gritty of our code, explaining not only
+    the "what" and the "how", but also the supremely important
+    "why". In addition, the documentation should include the source
+    code itself. In our ideal world a developer would read a paragraph
+    that details what a function is intending to do and then read the
+    function code itself.</p>
 
-  <p>Having settled on the decition that my software documentations
-    would live in the web and being an avid Emacs user I explored it's
-    major mode org as my programming environment. However, I never truly
-    stopped feeling awkward and came to the following realizations:</p>
+  <p>Other static website generators such as
+    <a href="{{ data.links.jekyll }}">jekyll</a> or
+    <a href="{{ data.links.wintersmith }}">wintersmith</a> would be
+    sufficient for the job of writing a traditional style
+    documentation. However, there is no way to include the snippets of
+    code unless you write them out yourself, which would be a
+    nightmare to mantain since whenever the code in the source files
+    changed, the code in the documentation would have to be updated
+    aswell. That's when we came up with the idea of marking up regions
+    of code in the source files with comments and given them a name,
+    then in the documentation we could write a reference to a code
+    region with a particular name and the static site generator would
+    take care of fetching the code and putting it in, as if we had
+    typed it ourselves. This way, whenever the code in the source
+    files changes the user just has to re-run the command to create
+    the static site and everything will be synchronized.</p>
 
-  <dl>
-    <dt>Tools matter</dt>
-    <dd>Although some people argue that all you need to program is
-      Notepad or TextEdit, the truth, at least for me is that tools
-      are not a pro but a must. Syntax coloring, code navigation and
-      other such functionalities have superb implementations in the
-      most pupular editors. However, these things never worked a 100%
-      on the Emacs org mode, for example I decided that I wanted to
-      work with web-mode rather than the default html mode for html
-      code snippets, and although the standard html syntax coloring
-      worked just fine, I needed to do a reopening of the file each
-      time I added a new snippet when using the preferred web-mode
-      highlighting.</dd>
-
-    <dt>The status quo is hard to beat</dt>
-    <dd>I had been programming on my own for all my life, but as I was
-      about to embark in some associations I quickly realized that the
-      people I was going to work with would have to learn to use the
-      tools for literate programming that I had been using (Emacs +
-      org mode). Although I give the highest praise I possible can to
-      the Emacs editor and would recommend it to anyone I also
-      understood that it has a high learning curve. I wanted the
-      people I work with to have the option to begin contributing
-      right away by using the tools they already mastered.</dd>
-    </dl>
-
-    <p>The solution was to turn literate programmin on it's
-    head. Rather than writing the literate document containing the
-    source code which would then be tangled out into their
-    corresponding source files, we would write the code in their
-    source files as it has pretty much always been done, but we would
-    use comments to demarcates sections of code that we would later
-    reference from an html file.</p>
 </div>
 
 <div>
   <h1>Terminology</h1>
 
   <p>The Scythe program commands revolve around a directory where the
-  user puts the files that will be needed in the process of creating
-  the static site. This directory is referred to as the
-  <code>input directory</code> or <code>Scythe
+    user puts the files that will be needed in the process of creating
+    the static site. This directory is referred to as the
+    <code>input directory</code> or <code>Scythe
   directory</code> throughout the documentation.</p>
 
-  <p>From the input directory, the program will make a directory that
-    will contain the static site contents. This generated directory is
-    the one that should be hosted through some sort of provider and is
-    denominated as <code>output directory</code> throughout
-    this website.</p>
+  <p>Afer the command to make the site is run a new directory will
+    have been created, containing all the files that make up the
+    static site, ready to be browsed or deployed. We refer to this
+    directory as the <code>output directory</code>.</p>
 
   <p>The program catgorizes each of the files and directories
-  contained in the input directory, there are only three possible
-  categories:</p>
+    contained in the input directory, there are only three possible
+    categories:</p>
 
   <ul>
     <li>Files or directories that are meant to give additional
@@ -130,12 +95,16 @@
       directory. These files are said to be of type <code>verbatim</code>.</li>
   </ul>
 
-  <p>The html tags the users put in their html pages which reference
-  code are called <code>markup code references</code>.</p>
+  <p>Regions of code that are marked in the source files with the appropiate
+    comment syntax as referred to as <code>code regions</code>,
+    as you will learn later there are two kinds of code regions, and
+    one is a shortcut form of the first that works for smaller and
+    simpler cases.</p>
 
-  <p>The lines of code that are delimited in a source file by a
-  special kind of comment, and which are the referenced code are
-  denominated <code>source code references</code>.</p>
+  <p>The code regions are referenced in the page-type files through
+    the use of a macro.  We call this macros <code>code references</code>. Macros
+    are part of the extra syntax that <a href="{{ data.links.nunjucks }}">nunjucks</a> allow
+    us to use in the html files.</p>
 </div>
 
 {% endblock %}

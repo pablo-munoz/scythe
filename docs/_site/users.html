@@ -47,7 +47,7 @@
   <h1>Installation</h1>
 
   <p>First ensure that you have <a href="data.links.node">NodeJS</a> and the Node's package manager <a href="data.links.npm">NPM</a> installed.
-    The in a console run the following command.</p>
+    Then, in a console run the following command.</p>
 
   <pre>npm install -g pablo-munoz/scythe</pre>
 
@@ -75,8 +75,8 @@
     The Scythe program comes with a number of commands that are
     detailed below, of these, the <code>mksite</code> command is the
     most important as it is the one that carries out the static
-    website generation. The rest of the commands are conerned only
-    with quality of life improvements.
+    website generation. The rest of the commands are limited to
+    quality of life improvements.
   </p>
 
 
@@ -84,37 +84,39 @@
 
   <p>The <code>mksite</code> command is the most important one. When
     called it will process all files and directories in the current
-    working directory and creates a static site out of them. By default,
-    the generated static site will be inside the <code>_site/</code> special directory, at the
-    first level of whatever directory you are running the command from.</p>
+    working directory and create a static site out of them. By
+    default, the generated static site will appear inside a <code>_site/</code> subdirectory,
+    but this behaviour can be changed through configuration options.
+    </p>
 
 
   <h2><span class="mono">mktemplate</span></h2>
 
   <p>The <code>mktemplate</code> command creates a default Scythe
-    directory. After running it you end up with the following:</p>
+    directory that can be used to create sites with the same look and
+    feel as this very documentation. After running this command you
+    end up with the following:</p>
 
   <ul>
     <li>A <code>docs/</code> directory. This will be the directory you should
-      run the <code>mksite</code> command from. The following things
-      listed next will all be inside of it.</li>
+      run the <code>mksite</code> command from. All the files listed
+      next will be inside it.</li>
     <li>An empty <code>_config.yml</code>.</li>
     <li>The special directories <code>_data/</code>, <code>_layouts/</code> and <code>_includes/</code>.</li>
     <li>A <code>default.html</code> super template (inside of <code>_layouts/</code>).</li>
-    <li>A <code>public/</code> verbatim directory is created for
-      you. It will contain a jquery file, toc.js which is our custom
-      version of the toc.js library (used for automatically generating
-      a table of contents for every page), solarized-dark.css which is
-      one of highlight.js many themes for the syntax coloring of the
-      source code and style.css the main stylesheet.</li>
-    <li>An <code>index.html</code> page-type file with some html
-      boilerplate that already links to/includes the various
-      JavaScripts and css files of <code>public/</code>.</li>
+    <li>A <code>public/</code> verbatim directory that in turn
+      contains a jquery file, toc.js which is our custom version of
+      the toc.js library (used for automatically generating a table of
+      contents for every page), solarized-dark.css which is one of
+      highlight.js many themes for displaying source code and
+      style.css, the main stylesheet.</li>
+    <li>An <code>index.html</code> page-type file with 
+      boilerplate code.</li>
   </ul>
+</div>
 
-  <p>If you run the <code>mksite</code> command with the cwd being the directory created by
-    <code>mktemplate</code> you will end up with a static site with the same look and feel as this
-    very documentation.</p>
+<div class="section">
+  <h1>Structure of the input directory</h1>
 </div>
 
 <div class="section">
@@ -122,9 +124,8 @@
 
   <p>An important part of the application is it's ability to take code
     from your software project's source files and insert it in the
-    html pages, syntax highlighted and all. In order to use this
-    functionality you must understand two concepts: code regions and
-    code references.</p>
+    html pages. In order to use this functionality you must understand
+    two concepts: code regions and code references.</p>
 
   <h2>Code regions</h2>
 
@@ -156,28 +157,27 @@
 
 
   <p>Now imagine we want to mark two regions, one that contains the
-    <code>greet_world</code> function code, which we will call
-    "greet_world", while the other marks the code
-    of the <code>greet_user</code> function, which we will call
+    <code>greet_world</code> function , which we will call
+    "greet_world", while the other marks the <code>greet_user</code> function, which we will call
     "greet_user". Then our file would end up looking like this:</p>
 
     
-<pre class="hljs"><code>// +++ greet_world
+<pre class="hljs"><code><span class="hljs-comment"># +++ greet_world</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">greet_world</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">print</span> <span class="hljs-string">'Hello, world!'</span>
-// --- greet_world
+<span class="hljs-comment"># --- greet_world</span>
 
-// +++ greet_region
+<span class="hljs-comment"># +++ greet_region</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">greet_user</span><span class="hljs-params">()</span>:</span>
     name = input(<span class="hljs-string">'What is your name?: '</span>)
     <span class="hljs-keyword">print</span> <span class="hljs-string">'Hello, '</span> + name 
-// --- greet_region</code></pre>
+<span class="hljs-comment"># --- greet_region</span></code></pre>
 
 
   <div class="alert alert-info">
     We suggest that you keep your code region names simple and easy to
-    remember. Usually, using the same of the function or class they
-    contain is the best way to go.
+    remember. Using the same of the function or class they contain is
+    usually the best way to go.
   </div>
 
   <div class="alert alert-warning">
@@ -190,21 +190,22 @@
 
   <p>If the code region you are delimiting is small and has no blank
   lines in between, you can use an even simpler comment syntax to
-  delimit it. For this special case you only one comment, at the
+  delimit it. For this special case you only use one comment, at the
   beginning of the region, followed by a plus and a minus symbol <code>+-</code>,
   followed by the name you will give to the reference.</p>
 
-  <p>In the example shown above, the python file with the two
-  functions, we could have used the simpler syntax to delimit the
-  regions. This is the case since they have no blank lines in
-  between.</p>
+  <p>In the example shown above (the python file with the two
+  functions) we could have used the simpler syntax to demarcate the
+  regions. This is allowed since there are no blank lines inbetween
+  the chunks of function code. Using the shortcut region syntax the
+  file would look like this:</p>
 
   
-<pre class="hljs"><code>// +- greet_world
+<pre class="hljs"><code><span class="hljs-comment"># +- greet_world</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">greet_world</span><span class="hljs-params">()</span>:</span>
     <span class="hljs-keyword">print</span> <span class="hljs-string">'Hello, world!'</span>
 
-// +- greet_region
+<span class="hljs-comment"># +- greet_region</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">greet_user</span><span class="hljs-params">()</span>:</span>
     name = input(<span class="hljs-string">'What is your name?: '</span>)
     <span class="hljs-keyword">print</span> <span class="hljs-string">'Hello, '</span> + name</code></pre>
@@ -212,20 +213,22 @@
 
   <h2>Code references</h2>
 
-  <p>Code references are the counterparts to code regions. They exist
-    within the html files that will make the pages of the generated
-    static site and are implemented as a nunjucks macro (once again,
-    if you don't know what a nunjucks macro is please go read the
-    <a href="https://mozilla.github.io/nunjucks/templating.html">nunjucks documentation</a>).</p>
+  <p>Code references are the counterparts of code regions. They are
+    nunjucks macros that take the name of a region and the file where
+    it should be looked up and, when processed by the template engine,
+    get expanded into markup containing the actual lines of code in
+    the code region they reference.</p>
 
   <p>Before being able to use the reference macro you must import it
-  through a nunjucks import directive like this:</p>
+  through a nunjucks import directive. We recommend you use the following:</p>
 
   <pre>{% import "scythe-macros.html" as scythe %}</pre>
 
-  <p>The <code>scythe-macros.html</code> file is automatically put
-  within reach of the template engine, so you don't need to use an
-    absolute path or copy it into your input directory. We recommend that you do this import in the <code>layouts/</code> files,
+  <p>The <code>scythe-macros.html</code> file is located inside the <code>html</code> directory
+  at the place where Scythe got installed. However it is automatically
+  put within reach of the template engine, so you don't need to use
+  it's absolute path or copy it into your input directory. In
+  addition, we recommend that you import the macro in the<code>layouts/</code> files,
     so you don't have to type it in each one of your pages.</p>
 
   <p>Making a reference to a code region is a simple as calling the <code>scythe.reference</code> macro
@@ -233,12 +236,39 @@
   file where it should be looked up, in this order.</p>
 
   <p>Continuing with the python source file example shown in the
-  previous headline, if we were to include the code of the <code>greet_world</code> function, which in
-    turn has been marked as being the region with the same name, <code>greet_world</code>,
-    we would put the following macro directive in the desired place of
-    a page file:</p>
+    previous headline, if we were to include the code of the
+    <code>greet_world</code> function, which in turn has been marked
+    as a code region with the same name (<code>greet_world</code>),
+    we would put the following macro directive in the desired of
+    the page file where we want the code to appear.:</p>
 
   <pre>{{ scythe.reference("greet_world", "greetings.py") }}</pre>
+
+    <p>Sometimes you might want to have some code in your
+      documentation that isn't part of the source code. For example,
+      the python code of the example we have been working in isn't
+      written in a source file, since it's merely for
+      exemplification. To achieve the same code style of the code
+      references for code you type directly into your webpages you
+      must use a call of the <code>blocks</code> macro (this macro is
+      part of the <code>scythe-macros.html</code> and
+      gets imported with it). In this case since you wont be passing
+      the name of a file from which a programing language can be
+      inferred you must pass the language yourself as the only
+      argument of the macro call and put your code inbetween.
+    </p>
+
+    <p>For example, the following code in the html page</p>:
+
+    <pre>{% call scythe.block('js') %}
+console.log("Some JavaScript code that isn't in a source file but was typed in directly.");
+{% endcall %}</pre>
+
+    <p>... produces the following output:</p>
+
+    
+<pre class="hljs"><code><span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Some JavaScript code that isn't in a source file but was typed in directly."</span>);</code></pre>
+
 </div>
 
 

@@ -28,20 +28,20 @@ var FILE_TYPE_VERBATIM = 'VERBATIM';
 var CODE_REGION_REGEX = _.mapValues(
     fse.readJsonSync(path.join(MODULE_ROOT, 'languages.json')), function(obj) {
         return new RegExp([
-            '[^\\S\\n]*',
+            '[^\\S\\n]*',                     // Zero or more spaces
             obj.symbol,                       // Comment syntax
-            '[^\\S\\n]*',
+            '[^\\S\\n]*',                     // Zero or more sapces
             '\\+{3}',                         // Three consecutive plus symbols
-            '[^\\S\\n]*',
+            '[^\\S\\n]*',                     // Zero or more spaces
             '(.+)',                           // The name of the reference (capture)
             '\\n',                            // Newline
             '([\\s\\S]+)\\n',                 // The actual code (capture),
-            '[^\\S\\n]*',
+            '[^\\S\\n]*',                     // Zero or more spaces
             obj.symbol,                       // Comment syntax
-            '[^\\S\\n]*',
+            '[^\\S\\n]*',                     // Zero or more spaces
             '\\-{3}',                         // Three consecutive minus symbols
-            '[^\\S\\n]*',
-            '\\1',                            // Same name reference of the comment start
+            '[^\\S\\n]*',                     // Zero or more spaces
+            '\\1',                            // Same name region name of the beginning comment
         ].join(''), 'g')
     });
 
@@ -51,12 +51,12 @@ var SIMPLE_CODE_REGION_REGEX = _.mapValues(
         return new RegExp([
             '[^\\S\\n]*',
             obj.symbol,                       // Comment syntax
-            '[^\\S\\n]*',
+            '[^\\S\\n]*',                     // Zero or more spaces
             '\\+\\-',                         // Three consecutive plus symbols
-            '[^\\S\\n]*',
+            '[^\\S\\n]*',                     // Zero or more spaces
             '(.+)',                           // The name of the reference (capture)
             '\\n',                            // Newline
-            '([\\s\\S]+?)\\n\\n',                 // The actual code (capture),
+            '([\\s\\S]+?)\\n\\n',             // The code (capture),
         ].join(''), 'g')
     });
 
@@ -321,6 +321,7 @@ function makeSite(parsedFiles, config) {
     // +++ makeCodeRegionHtml()
     function makeCodeRegionHtml(name, file) {
         var lang = path.extname(file).slice(1);
+        if (lang == 'jsx') lang = 'js';
         var code = getCodeRegion(name, file);
         return highlight.highlight(lang, code).value;
     }

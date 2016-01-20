@@ -179,20 +179,20 @@
 <pre class="hljs"><code><span class="hljs-keyword">var</span> CODE_REGION_REGEX = _.mapValues(
     fse.readJsonSync(path.join(MODULE_ROOT, <span class="hljs-string">'languages.json'</span>)), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>([
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more spaces</span>
             obj.symbol,                       <span class="hljs-comment">// Comment syntax</span>
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more sapces</span>
             <span class="hljs-string">'\\+{3}'</span>,                         <span class="hljs-comment">// Three consecutive plus symbols</span>
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more spaces</span>
             <span class="hljs-string">'(.+)'</span>,                           <span class="hljs-comment">// The name of the reference (capture)</span>
             <span class="hljs-string">'\\n'</span>,                            <span class="hljs-comment">// Newline</span>
             <span class="hljs-string">'([\\s\\S]+)\\n'</span>,                 <span class="hljs-comment">// The actual code (capture),</span>
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more spaces</span>
             obj.symbol,                       <span class="hljs-comment">// Comment syntax</span>
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more spaces</span>
             <span class="hljs-string">'\\-{3}'</span>,                         <span class="hljs-comment">// Three consecutive minus symbols</span>
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
-            <span class="hljs-string">'\\1'</span>,                            <span class="hljs-comment">// Same name reference of the comment start</span>
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more spaces</span>
+            <span class="hljs-string">'\\1'</span>,                            <span class="hljs-comment">// Same name region name of the beginning comment</span>
         ].join(<span class="hljs-string">''</span>), <span class="hljs-string">'g'</span>)
     });</code></pre>
 
@@ -209,12 +209,12 @@
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>([
             <span class="hljs-string">'[^\\S\\n]*'</span>,
             obj.symbol,                       <span class="hljs-comment">// Comment syntax</span>
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more spaces</span>
             <span class="hljs-string">'\\+\\-'</span>,                         <span class="hljs-comment">// Three consecutive plus symbols</span>
-            <span class="hljs-string">'[^\\S\\n]*'</span>,
+            <span class="hljs-string">'[^\\S\\n]*'</span>,                     <span class="hljs-comment">// Zero or more spaces</span>
             <span class="hljs-string">'(.+)'</span>,                           <span class="hljs-comment">// The name of the reference (capture)</span>
             <span class="hljs-string">'\\n'</span>,                            <span class="hljs-comment">// Newline</span>
-            <span class="hljs-string">'([\\s\\S]+?)\\n\\n'</span>,                 <span class="hljs-comment">// The actual code (capture),</span>
+            <span class="hljs-string">'([\\s\\S]+?)\\n\\n'</span>,             <span class="hljs-comment">// The code (capture),</span>
         ].join(<span class="hljs-string">''</span>), <span class="hljs-string">'g'</span>)
     });</code></pre>
 
